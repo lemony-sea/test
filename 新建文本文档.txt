@@ -1,0 +1,136 @@
+2020.07.15 下午
+checkout 撤销，没提交的撤销，用离他最近的上一版本替换
+没提交，想还原此版本，无法回退了
+Pycharm  软件 恢复未上传的版本
+git checkout -b dev  创建新的分支
+git branch  查看分支
+git checkout  master 改变分支
+git merge dev  合并分支到主分支
+上传远端
+$ git remote add origin https://github.com/lemony-sea/test.git
+$ git push -u origin master
+git add      git commit -m "" 
+git log 
+git diff 
+git reflog  
+
+
+2020.07.16 上午
+串口：
+波特率，串口通信的快慢，按照匹配的波特率进行接收  9600,115200常用
+校验位：传输过程中出现错误，本质上传输的0,1 为高低电平，
+              出现干扰时，电平更改，出现错误，奇偶校验
+数据位：多少个byte位一个字节，一个有用数据
+
+创建源文件，写程序，编译，生成可执行文件
+1.编译有顺序，小函数，被调用，应先于主函数编译
+2.编译需要支撑库
+3.调用的库文件，可能为操作系统自带的，不在该目录下，告诉这些库在哪
+所以，建立工程文件，解决以上问题
+qt 程序
+编译 GUI库引入，可以画图形界面
+以后串口编译，需要serialport串口库引入
+send(write)
+rexeive(read)
+
+
+2020.07.16 下午
+波形程序一直执行没有退出？
+return a.exe：图形化可视化程序UI框架的，基本都是这种逻辑，不同输入，响应不同
+启动UI->启动一个时间循环，等待消息，如果有，处理，点×消息为退出
+一个大的switch case，是什么消息，怎么处理。定时器time out也是一类消息
+
+通信协议：解释每个数据的含义，第一组数代表含义，每个值是什么意思
+TCP/IP网络
+通信的本质：对数据内容进行标记和说明，
+起始标志+数据长度+数据内容+校验结果+结束标志 
+其中数据内容包含数据类型和分字段含义
+12345 67890 hhhnn 知道数据长度，知道怎么给一串字符分组，理解含义
+跟硬件打交道：为真是的物理世界，没有绝对的0或1，
+所以不传送数据时，可能引脚上也有干扰传入，为垃圾无效数据，
+明确起始，结束标志（电平拉高10秒再拉低5秒），中间的数据才为真实的有用数据
+嵌入式系统大小端：高，低字节，
+
+
+2020.07.17  上午
+安装文件目录下 bin 上方位置处输入 cmd 弹出窗口，输入 mysql -u root -p,
+出现 mysql>连接成功   密码：123456
+可视化：连接 输入密码 出现一个下拉菜单
+数据库，对数据类型有要求，数据段：一列，记录为一行
+类型：int decimal（浮点数）decimal（5,2）5位字长，2位浮点；
+varchar(可变字符串）text(很长的字符串）
+主键：用来唯一找到该行记录的标志，可以用存储顺序
+将表格拆开，外键，另列一个表格，
+(例：武器属性，新编一个表格，给各种武器编号id,在主表中只填写编号即可
+这样更改武器时在附表中改，不用把主表使用此武器的全部更改，
+用户填写主表信息，用下拉菜单限制，只能填写附表中有的选项）
+
+DDL:
+create database mytestdb charset=utf8; 创建新数据库 mytestdb，规定utf8汉字模式
+use mytestdb 使用哪个数据库
+show databases; 查看所有数据库
+show tables，查看数据库中的表
+ //创建的为表结构，没有数据，只有列
+create table classes(
+    id int unsigned auto_increment primary key not null, //自动增长，主键，非空
+    name varchar(10)
+);
+create table students(
+    id int unsigned primary key auto_increment not null,
+    name varchar(20) default '',  //默认为空
+    age tinyint unsigned default 0,
+    height decimal(5,2),
+    gender enum('男','女','人妖','保密'),  //从中选择
+    cls_id int unsigned default 0 //表cls的id号
+)      
+alter 为修改表语句
+show create table students;  查看创建表的语句
+
+DML：增加
+插入：insert
+
+2020.07.17 下午
+drop 删除
+查询：
+select  s.name as 姓名, s.age as 年龄,s.height as 身高  from students as s where age >18 and height >180
+like 模糊查询 ＋%为此处可有可无
+具体/范围查询：
+select  s.name as 姓名, s.age as 年龄,s.height as 身高  from students as s where age  in (12,18,34);
+select  s.name as 姓名, s.age as 年龄,s.height as 身高  from students as s where age  between 18 and 34;
+查找空项：
+select  s.name as 姓名, s.age as 年龄,s.height as 身高  from students as s where height is null;
+排序：asc（默认）升序，dsc降序
+select  s.name as 姓名, s.age as 年龄,s.height as 身高  from students as s where height is  not null order by age desc;
+前一个为主，后一个为辅，前一个相同的情况下，按后一个标准排序
+select  s.name as 姓名, s.age as 年龄,s.height as 身高  from students as s where height is  not null order by age desc,height asc;
+求年龄和
+select gender ,sum(age) from students where is_delete=1 group by gender
+把各个名字连接起来
+select gender ,sum(age), group_concat(name) from students where is_delete=1 group by gender
+按性别分组，选出性别和统计数量
+select gender ,count(*), group_concat(name) from students where is_delete=1 group by gender
+分页，前5个不要，往后取2个，返回*全部都返回
+select * from students limit 5,2;
+把两个表中指定位置相等的内容关联起来（内关联）
+select * from  students inner join   classes on students.cls_id=classes.id;
+classes表格中只要 name 行
+select  students.*,classes.name from   students inner join   classes on students.cls_id=classes.id;
+左关联：左边的表格是全的，右边的能关联上的就显示，关联不上就null
+select  students.*,classes.name from   students left join   classes on students.cls_id=classes.id order by students.age;
+先关联上再＋where条件
+select  s.*,c.name from   students as s  left join   classes as c  on s.cls_id=c.id where s.age =18
+先关联起来，再找到最高的
+select classes.*,students.height  from classes inner join students on classes.id=students.cls_id where height =(select max(height) from students)
+
+
+
+2020.07.20 上午
+求部门id 每部门平均工资，分组语句！！！
+select  department_id,avg(salary) from employees group by department_id；
+部门最高工资，按升序排序，取第一个即为最低的
+select department_id ,max(salary) from employees group by department_id order by max(salary) limit 1;
+关联，嵌套查询；
+select e.* 
+from employees e inner join departments d on d.manager_id =e.employee_id
+where d.department_id=
+(select department_id from employees group by department_id order by avg(salary)  desc limit 1) ;
