@@ -134,3 +134,18 @@ select e.*
 from employees e inner join departments d on d.manager_id =e.employee_id
 where d.department_id=
 (select department_id from employees group by department_id order by avg(salary)  desc limit 1) ;
+
+2020.07.24 下午
+上午讲解了gcc 命令
+创建HELLO WORLD 的.c文件，编译，保存，gcc hw.c -o hw.out  可以显示hw.c的编译结果
+cat hw.c  不只显示编译输出结果，全部程序均显示
+sudo mount rootfs.ext3 mnt 将rootfs挂载
+进入黑色环境  hw.arm 可以显示hw.c的输出结果
+sudo cd 
+
+与QT结合
+解压-在终端打开---gedit mkspecs/qws/linux-arm-gnueabi-g++/qmake.conf打开白色页面
+配置configure
+编译QT程序  
+qemu
+解挂，增加权限
